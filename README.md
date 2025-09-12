@@ -1,8 +1,3 @@
-Of course. Based on our entire conversation and the full scope of your project, here is a comprehensive, professional README for your GitHub repository.
-
-You can copy and paste the entire content below into a file named `README.md` in the root of your project.
-
------
 
 # Rivora 🎙️
 
