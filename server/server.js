@@ -36,3 +36,10 @@ mongoose.connect(process.env.MONGO_URI)
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://localhost:${PORT}`));
+
+try {
+  require('./workers/videoWorker.js');
+  console.log(' BullMQ worker started successfully in the main server process.');
+} catch (error) {
+  console.error(' Failed to start BullMQ worker:', error);
+}
