@@ -11,6 +11,7 @@ const mongoose = require('mongoose');
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(cors({
   origin: "https://rivora-three.vercel.app", 
   credentials: true,                         
