@@ -11,7 +11,10 @@ const mongoose = require('mongoose');
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://rivora-three.vercel.app", 
+  credentials: true,                         
+}));
 
 app.use(express.json());
 app.use(cookieParser());
