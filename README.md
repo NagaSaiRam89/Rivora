@@ -5,7 +5,7 @@
 
 ## ✨ Live Demo
 
-**[https://rivora-three.vercel.app/](https://www.google.com/search?q=https://rivora-three.vercel.app/)** *(Replace with your final Vercel URL)*
+**[https://rivora-three.vercel.app/](https://rivora-three.vercel.app/)** 
 
 -----
 
@@ -44,7 +44,7 @@ Rivora is a full-stack monorepo application built with a modern, decoupled archi
                                                              | (Video Processing Job)
                                                              |
    +---------------------+     +-----------------------+     |
-   | Final Merged Videos | <-- |   FFmpeg & Cloudinary   | <---+
+   | Final Merged Videos | <-- |   FFmpeg & Cloudinary | <---+
    | (Cloudinary)        |     | (Worker Process)      |
    +---------------------+     +-----------------------+
 ```
