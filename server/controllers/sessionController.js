@@ -342,7 +342,7 @@ module.exports = {
   createSession,
   getMySessions,
   getSessionById,
-  transporter,
+  // transporter,
   mergeVideos,
   generateToken,
 }
