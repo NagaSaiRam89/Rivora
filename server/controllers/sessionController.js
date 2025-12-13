@@ -177,7 +177,7 @@ const generateToken = async (req, res) => {
     }
 
     const hmsResponse = await fetch(
-      'https://prod-in.100ms.live/hmsapi/rivora.app.100ms.live/api/token',
+      process.env.HMS_TOKEN_ENDPOINT,
       {
         method: 'POST',
         headers: {
