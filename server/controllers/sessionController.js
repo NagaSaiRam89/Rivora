@@ -4,20 +4,22 @@ const Session = require('../models/Session')
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
+const {Resend} = require('resend');
 
 const { processSession } = require('../merge/merge')
 const { videoQueue } = require('../queues/videoQueue')
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '465'),
-  secure: process.env.SMTP_PORT == 465,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  family: 4,
-})
+const resend = new Resend(process.env.RESEND_API_KEY);
+// const transporter = nodemailer.createTransport({
+//   host: process.env.SMTP_HOST || 'smtp.gmail.com',
+//   port: parseInt(process.env.SMTP_PORT || '465'),
+//   secure: process.env.SMTP_PORT == 465,
+//   auth: {
+//     user: process.env.SMTP_USER,
+//     pass: process.env.SMTP_PASS,
+//   },
+//   family: 4,
+// })
 
 // Updated sendInvitation function
 const sendInvitation = async (req, res) => {
@@ -78,8 +80,8 @@ const sendInvitation = async (req, res) => {
     const inviteLink = `${process.env.FRONTEND_URL}/device-setup/${guestToken}`
     const audienceLink = `${process.env.FRONTEND_URL}/device-setup/${participantToken}`
 
-    await transporter.sendMail({
-      from: process.env.SMTP_USER,
+    await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL,
       to: guestEmail,
       subject: `Invitation to join the session "${
         session.title || 'Untitled Session'
