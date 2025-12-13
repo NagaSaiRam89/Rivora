@@ -4,22 +4,23 @@ const Session = require('../models/Session')
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
-const {Resend} = require('resend');
+const sgMail = require('@sendgrid/mail')
 
 const { processSession } = require('../merge/merge')
 const { videoQueue } = require('../queues/videoQueue')
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-// const transporter = nodemailer.createTransport({
-//   host: process.env.SMTP_HOST || 'smtp.gmail.com',
-//   port: parseInt(process.env.SMTP_PORT || '465'),
-//   secure: process.env.SMTP_PORT == 465,
-//   auth: {
-//     user: process.env.SMTP_USER,
-//     pass: process.env.SMTP_PASS,
-//   },
-//   family: 4,
-// })
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+// const resend = new Resend(process.env.RESEND_API_KEY);
+// // const transporter = nodemailer.createTransport({
+// //   host: process.env.SMTP_HOST || 'smtp.gmail.com',
+// //   port: parseInt(process.env.SMTP_PORT || '465'),
+// //   secure: process.env.SMTP_PORT == 465,
+// //   auth: {
+// //     user: process.env.SMTP_USER,
+// //     pass: process.env.SMTP_PASS,
+// //   },
+// //   family: 4,
+// // })
 
 // Updated sendInvitation function
 const sendInvitation = async (req, res) => {
@@ -80,32 +81,32 @@ const sendInvitation = async (req, res) => {
     const inviteLink = `${process.env.FRONTEND_URL}/device-setup/${guestToken}`
     const audienceLink = `${process.env.FRONTEND_URL}/device-setup/${participantToken}`
 
-    await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL,
-      to: guestEmail,
-      subject: `Invitation to join the session "${
-        session.title || 'Untitled Session'
-      }"`,
+    const msg = {
+      to: guestEmail, // Recipient
+      from: process.env.SENDGRID_FROM_EMAIL, // Verified Sender Identity
+      subject: `Invitation to join session: "${session.title}"`,
       html: `
-        <div style="font-family: 'Inter', sans-serif; line-height: 1.6; color: #333333; max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-            <p style="font-size: 16px; margin-bottom: 15px;">Hi <strong style="color: #333333;">${guestName}</strong>,</p>
-            <p style="font-size: 16px; margin-bottom: 15px;">You have been invited to join a studio session by <strong style="color: #333333;">${user.name}</strong>:</p>
-            <p style="font-size: 18px; font-weight: bold; color: #8A65FD; margin-bottom: 25px; text-align: center;">
-                "<b>${session.title}</b>"
-            </p>
-            <p style="text-align: center; margin-bottom: 25px;">
-                <a href="${inviteLink}" style="display: inline-block; padding: 12px 25px; background-color: #8A65FD; color: #ffffff; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px; transition: background-color 0.3s ease;">
-                    Join the Studio Session
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+            <h2>Hi ${guestName},</h2>
+            <p><strong>${user.name}</strong> has invited you to a studio recording session.</p>
+            
+            <div style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                <h3 style="margin: 0 0 10px 0; color: #8A65FD;">${session.title}</h3>
+                <p style="margin-bottom: 20px;">Click the button below to set up your camera and join.</p>
+                <a href="${inviteLink}" style="background-color: #8A65FD; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                    Join Studio
                 </a>
+            </div>
+
+            <p style="font-size: 12px; color: #666;">
+                If you have trouble clicking the button, paste this link in your browser:<br>
+                <a href="${inviteLink}">${inviteLink}</a>
             </p>
-            <p style="font-size: 14px; color: #666666; text-align: center; margin-top: 30px;">
-                If you did not expect this, please ignore this email.
-            </p>
-            <p style="font-size: 12px; color: #999999; text-align: center; margin-top: 20px;">
-                &copy; 2025 Rivora. All rights reserved.
-            </p>
-        </div>`,
-    })
+        </div>
+      `,
+    }
+
+    await sgMail.send(msg)
 
     res.status(200).json({
       message: `Invite sent to ${guestEmail}`,
