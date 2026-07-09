@@ -4,23 +4,23 @@ const Session = require('../models/Session')
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
-const sgMail = require('@sendgrid/mail')
+// const sgMail = require('@sendgrid/mail')
 
 const { processSession } = require('../merge/merge')
 const { videoQueue } = require('../queues/videoQueue')
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 // const resend = new Resend(process.env.RESEND_API_KEY);
-// // const transporter = nodemailer.createTransport({
-// //   host: process.env.SMTP_HOST || 'smtp.gmail.com',
-// //   port: parseInt(process.env.SMTP_PORT || '465'),
-// //   secure: process.env.SMTP_PORT == 465,
-// //   auth: {
-// //     user: process.env.SMTP_USER,
-// //     pass: process.env.SMTP_PASS,
-// //   },
-// //   family: 4,
-// // })
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT || '465'),
+  secure: process.env.SMTP_PORT == 465,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+  family: 4,
+})
 
 // Updated sendInvitation function
 const sendInvitation = async (req, res) => {
